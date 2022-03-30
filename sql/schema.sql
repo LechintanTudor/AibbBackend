@@ -1,0 +1,8 @@
+DROP SCHEMA IF EXISTS public CASCADE;
+CREATE SCHEMA public;
+SET search_path TO public;
+
+CREATE TABLE person (
+    id SERIAL PRIMARY KEY NOT NULL,
+    name VARCHAR(60) NOT NULL
+);

@@ -1,0 +1,1 @@
+DELETE FROM person WHERE id = $1 RETURNING id, name;
