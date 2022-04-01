@@ -6,15 +6,17 @@ use sqlx::postgres::PgPool;
 use std::sync::Arc;
 
 /// (name) -> (id, name)
-const SQL_PERSON_INSERT: &'static str = include_str!("sql/person/insert.sql");
+const SQL_PERSON_INSERT: &str = include_str!("sql/person/insert.sql");
+/// (id, name) -> u64
+const SQL_PERSON_UPDATE: &str = include_str!("sql/person/update.sql");
 /// (id) -> (id, name)
-const SQL_PERSON_REMOVE: &'static str = include_str!("sql/person/remove.sql");
+const SQL_PERSON_REMOVE: &str = include_str!("sql/person/remove.sql");
 /// (id) -> (id, name)
-const SQL_PERSON_GET: &'static str = include_str!("sql/person/get.sql");
+const SQL_PERSON_GET: &str = include_str!("sql/person/get.sql");
 /// () -> [(id, name)]
-const SQL_PERSON_GET_ALL: &'static str = include_str!("sql/person/get_all.sql");
+const SQL_PERSON_GET_ALL: &str = include_str!("sql/person/get_all.sql");
 /// () -> ()
-const SQL_PERSON_CLEAR: &'static str = include_str!("sql/person/clear.sql");
+const SQL_PERSON_CLEAR: &str = include_str!("sql/person/clear.sql");
 
 #[derive(Clone)]
 pub struct PgPersonRepository {
@@ -34,6 +36,15 @@ impl PersonRepository for PgPersonRepository {
             .bind(&person.name)
             .fetch_one(&self.pool)
             .await
+    }
+
+    async fn update(&self, person: &Person) -> Result<bool, RepositoryError> {
+        sqlx::query(SQL_PERSON_UPDATE)
+            .bind(person.id)
+            .bind(&person.name)
+            .execute(&self.pool)
+            .await
+            .map(|r| r.rows_affected() == 1)
     }
 
     async fn remove(&self, id: i32) -> Result<Option<Person>, RepositoryError> {

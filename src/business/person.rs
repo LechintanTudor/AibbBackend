@@ -18,6 +18,10 @@ impl PersonService {
         self.persons.create(person).await
     }
 
+    pub async fn update(&self, person: &Person) -> Result<bool, PersonServiceError> {
+        self.persons.update(person).await
+    }
+
     pub async fn remove(&self, id: i32) -> Result<Option<Person>, PersonServiceError> {
         self.persons.remove(id).await
     }
